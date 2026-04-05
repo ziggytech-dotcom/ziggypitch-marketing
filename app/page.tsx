@@ -1,537 +1,279 @@
-import Script from "next/script"
+'use client'
+import Link from 'next/link'
+import { useState } from 'react'
 
-const ACCENT = "#f97316"
-const SIGNUP = "https://app.ziggypitch.com/signup"
-const LOGIN  = "https://app.ziggypitch.com/login"
+const features = [
+  { title: 'Proposal Templates', desc: 'Start from a library of proven templates. Customize with your brand, pricing tables, and service packages in minutes.' },
+  { title: 'View Tracking', desc: 'Know the instant your proposal is opened. See how long they spent on each section. Follow up at exactly the right moment.' },
+  { title: 'E-Signatures', desc: 'Collect legally binding signatures without leaving the platform. Full audit trail. No printing, scanning, or back-and-forth.' },
+  { title: 'Video Embeds', desc: 'Embed a personal video introduction or product walkthrough directly in your proposal. Stand out from everyone else\'s PDF.' },
+  { title: 'Content Library', desc: 'Save your best case studies, pricing blocks, and boilerplate sections. Reuse them across proposals without starting from scratch.' },
+  { title: 'Stripe Payments', desc: 'Collect a deposit or full payment directly from the proposal. One click for the client. Stripe-powered, professionally presented.' },
+]
 
-const jsonLd = {
-  "@context": "https://schema.org",
-  "@graph": [
-    {
-      "@type": "SoftwareApplication",
-      "name": "ZiggyPitch",
-      "applicationCategory": "BusinessApplication",
-      "operatingSystem": "Web",
-      "url": "https://ziggypitch.com",
-      "description": "Proposal, quote, and business pitch software for freelancers, agencies, and consultants. Built-in e-signature, video embeds, analytics, and content library.",
-      "offers": [
-        { "@type": "Offer", "name": "Starter", "price": "19.00", "priceCurrency": "USD" },
-        { "@type": "Offer", "name": "Pro",     "price": "29.00", "priceCurrency": "USD" },
-      ]
-    },
-    {
-      "@type": "FAQPage",
-      "mainEntity": [
-        {
-          "@type": "Question",
-          "name": "How much does ZiggyPitch cost?",
-          "acceptedAnswer": {
-            "@type": "Answer",
-            "text": "ZiggyPitch starts at $19/mo (Starter: 5 active proposals, 10 templates, e-sign, basic analytics). Pro is $29/mo — unlimited proposals, full analytics, video embeds, content library, custom branding, viewed notifications. Both plans start with a 14-day free trial, no credit card required."
-          }
-        },
-        {
-          "@type": "Question",
-          "name": "How is ZiggyPitch different from Proposify?",
-          "acceptedAnswer": {
-            "@type": "Answer",
-            "text": "Proposify starts at $49/mo. ZiggyPitch Pro is $29/mo — unlimited proposals, video embeds, full analytics, e-sign included. That's 41% cheaper with every feature you actually use."
-          }
-        },
-        {
-          "@type": "Question",
-          "name": "Does ZiggyPitch have e-signature built in?",
-          "acceptedAnswer": {
-            "@type": "Answer",
-            "text": "Yes. E-signature is included on both Starter and Pro plans — no DocuSign, no HelloSign, no third-party tool needed. Your clients sign directly inside the proposal on any device."
-          }
-        },
-        {
-          "@type": "Question",
-          "name": "How does the 14-day free trial work?",
-          "acceptedAnswer": {
-            "@type": "Answer",
-            "text": "Sign up and get 14 days free — no credit card required. Full access to all features. If it's not for you, just walk away. Nothing to cancel."
-          }
-        },
-        {
-          "@type": "Question",
-          "name": "Can I add video to my proposals?",
-          "acceptedAnswer": {
-            "@type": "Answer",
-            "text": "Yes — on the Pro plan. Embed a personal intro video at the top of any proposal. Clients see your face, hear your voice, and connect with you before they ever sign. It's one of the highest-impact features for improving close rates."
-          }
-        },
-        {
-          "@type": "Question",
-          "name": "Will I know when a client opens my proposal?",
-          "acceptedAnswer": {
-            "@type": "Answer",
-            "text": "Yes. Pro plan includes 'viewed' notifications — you get an alert the moment a prospect opens your proposal. You'll also see time spent per section and scroll depth, so you know exactly what they read and what they skipped."
-          }
-        }
-      ]
-    }
-  ]
-}
+const faqs = [
+  { q: 'How is ZiggyPitch different from Google Docs or Word?', a: 'You can\'t track whether a client opened your Google Doc. You can\'t collect a signature in Word. ZiggyPitch gives you view tracking, e-signatures, and Stripe payments in one place.' },
+  { q: 'What counts as an "active proposal"?', a: 'An active proposal is one that\'s been sent but not yet accepted, declined, or archived. On Starter you can have 5 active at a time — close one to open a new slot. Pro has unlimited.' },
+  { q: 'Are the e-signatures legally binding?', a: 'Yes. Our e-signatures meet eSign Act and ESIGN standards. Full audit trail with timestamps and IP addresses on every signed document.' },
+  { q: 'How does view tracking work?', a: 'When your client opens the proposal link, you get an instant notification. You can see total views, time spent, and which sections they lingered on.' },
+  { q: 'Can I collect payment when they sign?', a: 'Yes. Connect Stripe and add a payment block to collect a deposit or full payment at signature. Clients pay without leaving the proposal.' },
+  { q: 'How does the free trial work?', a: '14 days of full Pro access. No credit card required. After 14 days, choose a plan or your account moves to read-only.' },
+]
 
-export default function Home() {
+export default function HomePage() {
+  const [openFaq, setOpenFaq] = useState<number | null>(null)
+
   return (
-    <>
-      <Script id="json-ld" type="application/ld+json" dangerouslySetInnerHTML={{ __html: JSON.stringify(jsonLd) }} />
-
-      <style>{`@media(max-width:768px){.nav-links{display:none!important}}`}</style>
-
-      {/* ── NAV ── */}
-      <nav style={{
-        position: "sticky", top: 0, zIndex: 100,
-        background: "rgba(10,10,10,0.92)", backdropFilter: "blur(12px)",
-        borderBottom: "1px solid #1f1f1f", padding: "0 24px",
-      }}>
-        <div style={{ maxWidth: 1120, margin: "0 auto", height: 64, display: "flex", alignItems: "center", justifyContent: "space-between" }}>
-          <a href="/" style={{ fontSize: 22, fontWeight: 700, color: "#fff", textDecoration: "none", letterSpacing: "-0.5px" }}>
-            Ziggy<span style={{ color: ACCENT }}>Pitch</span>
-          </a>
-
-          <div className="nav-links" style={{ display: "flex", gap: 28 }}>
-            {[["Features", "#features"], ["Compare", "/vs/proposify"], ["Pricing", "#pricing"], ["Blog", "/blog"], ["Sign In", LOGIN]].map(([label, href]) => (
-              <a key={label} href={href} style={{ color: "#888", fontSize: 15, textDecoration: "none", fontWeight: 500 }}>{label}</a>
-            ))}
+    <div className="bg-[#0a0a0a] min-h-screen" style={{ fontFamily: 'Space Grotesk, sans-serif' }}>
+      {/* Nav */}
+      <nav className="sticky top-0 z-50 bg-[#0a0a0a]/95 backdrop-blur border-b border-[#1f1f1f]">
+        <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
+          <div className="flex items-center justify-between h-16">
+            <Link href="/" className="font-bold text-2xl tracking-tight">
+              <span style={{ color: '#f97316' }}>Ziggy</span><span className="text-white">Pitch</span>
+            </Link>
+            <div className="hidden md:flex items-center gap-1 text-xs text-[#b3b3b3]">
+              {[['Features', '/features'], ['Pricing', '/pricing'], ['Suite', '/suite'], ['vs Proposify', '/compare/proposify'], ['vs PandaDoc', '/compare/pandadoc']].map(([label, href]) => (
+                <Link key={label} href={href} className="px-3 py-2 hover:text-white transition-colors rounded-lg hover:bg-[#1a1a1a]">{label}</Link>
+              ))}
+            </div>
+            <div className="flex items-center gap-3">
+              <Link href="https://app.ziggypitch.com/login" className="hidden md:block text-sm text-[#b3b3b3] hover:text-white transition-colors">Sign In</Link>
+              <Link href="https://app.ziggypitch.com/signup" className="inline-flex items-center gap-2 px-5 py-2.5 bg-[#f97316] text-white rounded-xl font-semibold text-sm hover:bg-[#f97316]/90 hover:scale-105 transition-all">Start Free Trial</Link>
+            </div>
           </div>
-
-          <a href={SIGNUP} style={{
-            background: ACCENT, color: "#fff", textDecoration: "none",
-            padding: "9px 20px", borderRadius: 8, fontSize: 14, fontWeight: 700, whiteSpace: "nowrap",
-          }}>
-            Start Free Trial
-          </a>
         </div>
       </nav>
 
-      {/* ── HERO ── */}
-      <section style={{ padding: "100px 24px 80px", textAlign: "center", maxWidth: 820, margin: "0 auto" }}>
-        <div style={{
-          display: "inline-block",
-          background: `rgba(249,115,22,0.1)`, border: `1px solid rgba(249,115,22,0.25)`,
-          borderRadius: 99, padding: "6px 16px", fontSize: 13, color: ACCENT, fontWeight: 600,
-          marginBottom: 28, letterSpacing: "0.02em",
-        }}>
-          Proposify Alternative · 41% less at $29/mo
+      {/* Hero */}
+      <section className="relative overflow-hidden pt-32 pb-24 px-4 bg-[#0a0a0a]">
+        <div className="absolute inset-0 pointer-events-none">
+          <div className="absolute top-1/2 left-1/2 -translate-x-1/2 -translate-y-1/2 w-[1000px] h-[600px] bg-[#f97316]/8 rounded-full blur-3xl" />
+          <div className="absolute inset-0 opacity-[0.03]" style={{ backgroundImage: 'linear-gradient(rgba(255,255,255,0.1) 1px, transparent 1px), linear-gradient(90deg, rgba(255,255,255,0.1) 1px, transparent 1px)', backgroundSize: '64px 64px' }} />
         </div>
-
-        <h1 style={{
-          fontSize: "clamp(42px,6vw,68px)", fontWeight: 700, lineHeight: 1.08,
-          letterSpacing: "-1.5px", marginBottom: 24, color: "#fff",
-        }}>
-          Proposals that win.<br />
-          <span style={{
-            background: `linear-gradient(135deg,#fff 0%,${ACCENT} 100%)`,
-            WebkitBackgroundClip: "text", WebkitTextFillColor: "transparent", backgroundClip: "text",
-          }}>At a price that doesn&apos;t hurt.</span>
-        </h1>
-
-        <p style={{ fontSize: 19, color: "#888", lineHeight: 1.6, marginBottom: 40, maxWidth: 600, margin: "0 auto 40px" }}>
-          Professional proposals with e-signature, video embeds, and real-time analytics — all in one tool.{" "}
-          <strong style={{ color: "#fff" }}>Starting at $19/mo.</strong>
-        </p>
-
-        <div style={{ display: "flex", gap: 14, justifyContent: "center", flexWrap: "wrap", marginBottom: 24 }}>
-          <a href={SIGNUP} style={{
-            background: ACCENT, color: "#fff", textDecoration: "none",
-            padding: "15px 30px", borderRadius: 10, fontSize: 16, fontWeight: 700,
-          }}>
-            Start Free Trial — 14 days free
-          </a>
-          <a href="#pricing" style={{
-            background: "transparent", color: "#fff", textDecoration: "none",
-            padding: "15px 30px", borderRadius: 10, fontSize: 16, fontWeight: 600, border: "1px solid #333",
-          }}>
-            See Pricing
-          </a>
-        </div>
-
-        <div style={{ display: "flex", gap: 24, justifyContent: "center", flexWrap: "wrap" }}>
-          {["14-day free trial", "No credit card", "Cancel anytime"].map(badge => (
-            <span key={badge} style={{ fontSize: 13, color: "#555", display: "flex", alignItems: "center", gap: 6 }}>
-              <span style={{ color: ACCENT, fontWeight: 700 }}>✓</span> {badge}
-            </span>
-          ))}
-        </div>
-      </section>
-
-      {/* ── PROBLEM STRIP ── */}
-      <section style={{
-        background: "#0f0f0f", borderTop: "1px solid #1f1f1f", borderBottom: "1px solid #1f1f1f", padding: "56px 24px",
-      }}>
-        <div style={{
-          maxWidth: 1000, margin: "0 auto",
-          display: "grid", gridTemplateColumns: "repeat(auto-fit,minmax(260px,1fr))", gap: 32, textAlign: "center",
-        }}>
-          {[
-            { emoji: "📄", headline: "Your proposals look like everyone else's.", body: "A Word doc or a PDF with your logo slapped on it. Your prospect reads it on their phone, it's a mess, and they move on to the next vendor who sent something impressive." },
-            { emoji: "👻", headline: "You don't know if they even opened it.", body: "You sent the proposal three days ago. Radio silence. Did they read it? Did it go to spam? You have no idea when to follow up — so you wait, and the deal goes cold." },
-            { emoji: "💸", headline: "Proposify charges $49/mo just to start.", body: "And you still need DocuSign on top. ZiggyPitch is $29/mo with e-sign built in, video embeds, full analytics, and unlimited proposals. No hidden fees." },
-          ].map(({ emoji, headline, body }) => (
-            <div key={headline}>
-              <div style={{ fontSize: 36, marginBottom: 12 }}>{emoji}</div>
-              <h3 style={{ fontSize: 18, fontWeight: 700, color: "#fff", marginBottom: 8 }}>{headline}</h3>
-              <p style={{ fontSize: 15, color: "#666", lineHeight: 1.6 }}>{body}</p>
-            </div>
-          ))}
-        </div>
-      </section>
-
-      {/* ── FEATURES ── */}
-      <section id="features" style={{ padding: "96px 24px", maxWidth: 1100, margin: "0 auto" }}>
-        <div style={{ textAlign: "center", marginBottom: 64 }}>
-          <h2 style={{ fontSize: "clamp(32px,4vw,48px)", fontWeight: 700, letterSpacing: "-1px", marginBottom: 16 }}>
-            Everything a winning proposal needs.
-          </h2>
-          <p style={{ fontSize: 17, color: "#666", maxWidth: 500, margin: "0 auto" }}>
-            From first impression to signed contract — every tool you need to close faster and look more professional.
-          </p>
-        </div>
-
-        <div style={{ display: "grid", gridTemplateColumns: "repeat(auto-fit,minmax(240px,1fr))", gap: 20 }}>
-          {[
-            { icon: "🎨", title: "Professional Templates", desc: "Design, marketing, dev, consulting, construction — ready-to-use templates for every industry. Start from scratch or customize to match your brand." },
-            { icon: "🖱️", title: "Drag-and-Drop Builder", desc: "Build any proposal visually. Add sections, reorder blocks, embed pricing tables. No coding, no export — just a clean, live document your client can open anywhere." },
-            { icon: "✍️", title: "Built-in E-Signature", desc: "Legally binding e-signature included on every plan. No DocuSign, no HelloSign, no extra monthly fee. Your client signs in seconds from any device." },
-            { icon: "🎥", title: "Video Embeds", desc: "Add a personal intro video to any proposal. Your face, your voice, your enthusiasm — before they read a single word. One of the highest-impact features for close rate." },
-            { icon: "👁️", title: "Viewed Notifications", desc: "Know the exact moment a prospect opens your proposal. Strike while the iron's hot — follow up when you know they're looking." },
-            { icon: "📊", title: "Proposal Analytics", desc: "Time spent per section, scroll depth, opens, and views. Know exactly what they read and what they skipped so you can follow up on the right thing." },
-            { icon: "📚", title: "Content Library", desc: "Save your best sections, case studies, and testimonials. Build a new proposal in minutes by snapping together reusable blocks. Never write the same thing twice." },
-            { icon: "🎯", title: "Custom Branding", desc: "Your logo, your colors, your custom domain. Proposals that look 100% like they came from your agency — not a tool with your logo pasted on top." },
-          ].map(({ icon, title, desc }) => (
-            <div key={title} style={{
-              background: "#111", border: "1px solid #1f1f1f", borderRadius: 16, padding: "28px 24px",
-            }}>
-              <div style={{ fontSize: 32, marginBottom: 14 }}>{icon}</div>
-              <h3 style={{ fontSize: 18, fontWeight: 700, color: "#fff", marginBottom: 10 }}>{title}</h3>
-              <p style={{ fontSize: 14, color: "#666", lineHeight: 1.65 }}>{desc}</p>
-            </div>
-          ))}
-        </div>
-
-        <div style={{
-          marginTop: 32, background: "#111", border: "1px solid #1f1f1f", borderRadius: 16,
-          padding: "28px 32px", display: "flex", flexWrap: "wrap", gap: "12px 40px",
-        }}>
-          <p style={{ color: "#555", fontSize: 13, fontWeight: 600, textTransform: "uppercase", letterSpacing: "0.08em", width: "100%", marginBottom: 4 }}>Also included</p>
-          {["Accept/decline tracking with timestamp", "Multi-currency pricing tables", "Client approval workflow", "Custom proposal URLs", "Password-protected proposals", "Mobile-friendly viewing", "Export to PDF", "14-day free trial"].map(f => (
-            <span key={f} style={{ fontSize: 14, color: "#888", display: "flex", alignItems: "center", gap: 8 }}>
-              <span style={{ color: ACCENT, fontWeight: 700 }}>✓</span> {f}
-            </span>
-          ))}
-        </div>
-      </section>
-
-      {/* ── COMING SOON STRIP ── */}
-      <section style={{
-        background: "#0d0d0d", borderTop: "1px solid #1f1f1f", borderBottom: "1px solid #1f1f1f", padding: "64px 24px",
-      }}>
-        <div style={{ maxWidth: 1000, margin: "0 auto" }}>
-          <div style={{ textAlign: "center", marginBottom: 40 }}>
-            <h2 style={{ fontSize: 28, fontWeight: 700, marginBottom: 8 }}>What's coming next</h2>
-            <p style={{ color: "#555", fontSize: 15 }}>We ship fast. Here's what's already in development.</p>
+        <div className="relative max-w-5xl mx-auto text-center">
+          <div className="inline-flex items-center gap-2 px-4 py-2 rounded-full bg-[#f97316]/10 border border-[#f97316]/20 text-[#f97316] text-xs font-semibold uppercase tracking-widest mb-8">
+            ZiggyPitch — Proposal Software
           </div>
-
-          <div style={{ display: "grid", gridTemplateColumns: "repeat(auto-fit,minmax(240px,1fr))", gap: 16 }}>
-            {[
-              { icon: "💳", title: "Payment on Acceptance", sub: "Collect deposits instantly", badge: "In Development", badgeColor: "#ff9500", desc: "When a client accepts your proposal, charge the deposit automatically. No more chasing invoices after the handshake." },
-              { icon: "🔗", title: "CRM Sync", sub: "Connect your pipeline", badge: "In Development", badgeColor: "#ff9500", desc: "Automatically sync accepted proposals to your CRM as won deals. No manual data entry, no copy-paste between tools." },
-              { icon: "⏰", title: "Proposal Expiry Dates", sub: "Create urgency that converts", badge: "Coming Soon", badgeColor: "#0066ff", desc: "Set an expiry on any proposal. Your client sees a countdown timer. Urgency is real — and close rates go up." },
-            ].map(({ icon, title, sub, badge, badgeColor, desc }) => (
-              <div key={title} style={{ background: "#111", border: "1px solid #1f1f1f", borderRadius: 14, padding: "24px 22px" }}>
-                <div style={{ display: "flex", alignItems: "center", justifyContent: "space-between", marginBottom: 12 }}>
-                  <span style={{ fontSize: 28 }}>{icon}</span>
-                  <span style={{
-                    background: `${badgeColor}20`, color: badgeColor, border: `1px solid ${badgeColor}40`,
-                    borderRadius: 99, padding: "3px 10px", fontSize: 11, fontWeight: 700, letterSpacing: "0.04em", textTransform: "uppercase",
-                  }}>{badge}</span>
-                </div>
-                <h3 style={{ fontSize: 16, fontWeight: 700, color: "#fff", marginBottom: 2 }}>{title}</h3>
-                <p style={{ fontSize: 12, color: "#555", marginBottom: 8 }}>{sub}</p>
-                <p style={{ fontSize: 13, color: "#666", lineHeight: 1.6, marginTop: 6 }}>{desc}</p>
+          <h1 className="text-5xl md:text-7xl font-bold text-white leading-tight tracking-tight mb-6">
+            Proposals that <span style={{ color: '#f97316' }}>close deals</span>
+          </h1>
+          <p className="text-xl md:text-2xl text-[#b3b3b3] max-w-3xl mx-auto leading-relaxed mb-10">
+            We were sending proposals in Google Docs. Couldn&apos;t tell if clients opened them, couldn&apos;t collect signatures, couldn&apos;t track what worked. We built the fix &mdash; and it costs less than your morning coffee per day.
+          </p>
+          <div className="flex flex-col sm:flex-row items-center justify-center gap-4 mb-4">
+            <Link href="https://app.ziggypitch.com/signup" className="w-full sm:w-auto inline-flex items-center justify-center gap-2 px-8 py-4 bg-[#f97316] text-white rounded-xl font-semibold text-lg hover:bg-[#f97316]/90 hover:scale-105 transition-all">
+              Start Free Trial
+              <svg className="w-5 h-5" fill="none" viewBox="0 0 24 24" stroke="currentColor"><path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M17 8l4 4m0 0l-4 4m4-4H3" /></svg>
+            </Link>
+            <Link href="/features" className="w-full sm:w-auto inline-flex items-center justify-center gap-2 px-8 py-4 bg-[#f97316]/10 border border-[#f97316]/30 text-[#f97316] rounded-xl font-semibold text-lg hover:bg-[#f97316]/20 transition-all">
+              See Features
+            </Link>
+          </div>
+          <p className="text-sm text-[#b3b3b3]/60">14-day free trial · No credit card required · Cancel anytime</p>
+          <div className="flex flex-wrap items-center justify-center gap-6 mt-12 pt-8 border-t border-[#1f1f1f]">
+            {['$19/mo Starter — less than Proposify', 'Know the instant your proposal is opened', 'E-signatures built in', 'Win/loss tracking'].map((fact) => (
+              <div key={fact} className="flex items-center gap-2 text-sm text-[#b3b3b3]">
+                <div className="w-1.5 h-1.5 rounded-full bg-[#f97316]" />
+                {fact}
               </div>
             ))}
           </div>
         </div>
       </section>
 
-      {/* ── INDUSTRIES ── */}
-      <section style={{ padding: "96px 24px", background: "#080808", borderTop: "1px solid #1f1f1f", borderBottom: "1px solid #1f1f1f" }}>
-        <div style={{ maxWidth: 1100, margin: "0 auto" }}>
-          <div style={{ textAlign: "center", marginBottom: 56 }}>
-            <h2 style={{ fontSize: "clamp(30px,4vw,46px)", fontWeight: 700, letterSpacing: "-1px", marginBottom: 14, color: "#fff" }}>
-              Built for your business
-            </h2>
-            <p style={{ fontSize: 17, color: "#666", maxWidth: 500, margin: "0 auto" }}>
-              Whether you're a solo freelancer or a 20-person agency, ZiggyPitch has templates and workflows built for how you sell.
-            </p>
-          </div>
-
-          <div style={{ display: "grid", gridTemplateColumns: "repeat(auto-fill,minmax(300px,1fr))", gap: 16, marginBottom: 40 }}>
-            {[
-              { icon: "🎨", name: "Marketing & Creative Agencies", desc: "Campaign proposals, retainer agreements, and creative briefs that land clients and set clear expectations from day one." },
-              { icon: "🔨", name: "Contractors & Construction", desc: "Project quotes, scope of work, and change order proposals. Get the deposit fast and protect yourself with signed scopes." },
-              { icon: "💻", name: "Web & Software Development", desc: "Project proposals, maintenance retainers, and sprint plans. Show clients exactly what they're getting — and sign it." },
-              { icon: "🎓", name: "Coaches & Consultants", desc: "Program proposals, advisory agreements, and workshop packages. Close high-ticket engagements with polished, branded proposals." },
-              { icon: "📸", name: "Photography & Video", desc: "Shoot packages, licensing agreements, and event quotes. Show your work, set the terms, get the signature." },
-              { icon: "🏠", name: "Real Estate Services", desc: "CMA presentations, listing proposals, and buyer packages. Stand out from every other agent with a proposal that looks the part." },
-              { icon: "🎯", name: "PR & Communications", desc: "Campaign pitches, media packages, and retainer proposals. Win the account before the first meeting is even over." },
-              { icon: "🏢", name: "B2B Sales Teams", desc: "RFP responses, enterprise proposals, and custom pricing packages. Close bigger deals with proposals that match the size of the opportunity." },
-            ].map(({ icon, name, desc }) => (
-              <div key={name} style={{
-                background: "#111", border: "1px solid #1f1f1f", borderRadius: 14,
-                padding: "24px 22px", display: "flex", alignItems: "flex-start", gap: 16,
-              }}>
-                <span style={{ fontSize: 32, flexShrink: 0, lineHeight: 1 }}>{icon}</span>
-                <div>
-                  <h3 style={{ fontSize: 15, fontWeight: 700, color: "#fff", marginBottom: 5 }}>{name}</h3>
-                  <p style={{ fontSize: 13, color: "#666", lineHeight: 1.55, margin: 0 }}>{desc}</p>
+      {/* Product preview placeholder */}
+      <section className="py-16 px-4 bg-[#0d0d0d]">
+        <div className="max-w-6xl mx-auto">
+          <div className="relative rounded-2xl border border-[#1f1f1f] overflow-hidden bg-[#111111]" style={{ aspectRatio: '16/9' }}>
+            <div className="absolute inset-0 bg-gradient-to-br from-[#f97316]/5 via-transparent to-transparent" />
+            <div className="absolute inset-0 flex items-center justify-center">
+              <div className="text-center">
+                <div className="w-16 h-16 rounded-2xl bg-[#f97316]/10 border border-[#f97316]/20 flex items-center justify-center mx-auto mb-4">
+                  <svg className="w-8 h-8 text-[#f97316]" fill="none" viewBox="0 0 24 24" stroke="currentColor"><path strokeLinecap="round" strokeLinejoin="round" strokeWidth={1.5} d="M9 12h6m-6 4h6m2 5H7a2 2 0 01-2-2V5a2 2 0 012-2h5.586a1 1 0 01.707.293l5.414 5.414a1 1 0 01.293.707V19a2 2 0 01-2 2z" /></svg>
                 </div>
+                <p className="text-white font-semibold text-lg">Product demo coming soon</p>
+                <p className="text-[#b3b3b3] text-sm mt-1">See ZiggyPitch in action</p>
+                <Link href="https://app.ziggypitch.com/signup" className="inline-flex items-center gap-2 mt-4 px-6 py-2.5 bg-[#f97316] text-white rounded-lg text-sm font-medium hover:bg-[#f97316]/90 transition-colors">Start free trial instead</Link>
+              </div>
+            </div>
+          </div>
+        </div>
+      </section>
+
+      {/* Features */}
+      <section className="py-24 md:py-32 px-4 bg-gradient-to-b from-[#0a0a0a] via-[#0c0f14] to-[#0a0a0a]">
+        <div className="max-w-7xl mx-auto">
+          <div className="text-center mb-16">
+            <p className="text-xs font-semibold uppercase tracking-widest text-[#f97316] mb-3">Features</p>
+            <h2 className="text-3xl md:text-5xl font-bold text-white mb-4">Everything you need to win more deals.</h2>
+            <p className="text-lg text-[#b3b3b3] max-w-2xl mx-auto leading-relaxed">Stop sending static PDFs into the void. ZiggyPitch turns proposals into interactive, trackable, signable documents.</p>
+          </div>
+          <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6 md:gap-8">
+            {features.map((f) => (
+              <div key={f.title} className="bg-[#111111] border border-[#1f1f1f] rounded-2xl p-6 md:p-8 hover:border-[#f97316]/30 hover:shadow-[0_0_30px_rgba(249,115,22,0.08)] transition-all group">
+                <div className="w-12 h-12 rounded-xl bg-[#f97316]/10 border border-[#f97316]/20 flex items-center justify-center mb-5 group-hover:bg-[#f97316]/20 transition-colors">
+                  <svg className="w-6 h-6 text-[#f97316]" fill="none" viewBox="0 0 24 24" stroke="currentColor"><path strokeLinecap="round" strokeLinejoin="round" strokeWidth={1.5} d="M13 10V3L4 14h7v7l9-11h-7z" /></svg>
+                </div>
+                <h3 className="text-xl font-semibold text-white mb-3">{f.title}</h3>
+                <p className="text-[#b3b3b3] leading-relaxed">{f.desc}</p>
+              </div>
+            ))}
+          </div>
+          <div className="text-center mt-12">
+            <Link href="/features" className="inline-flex items-center gap-2 px-8 py-4 bg-[#f97316]/10 border border-[#f97316]/30 text-[#f97316] rounded-xl font-semibold hover:bg-[#f97316]/20 transition-all">View all features</Link>
+          </div>
+        </div>
+      </section>
+
+      {/* Founding story */}
+      <section className="relative overflow-hidden py-24 md:py-32 px-4 bg-gradient-to-br from-[#080c10] via-[#0d1828] to-[#080c10]">
+        <div className="absolute top-0 right-0 w-[600px] h-[400px] bg-[#f97316]/6 rounded-full blur-3xl pointer-events-none" />
+        <div className="absolute bottom-0 left-0 w-[400px] h-[300px] bg-[#f97316]/4 rounded-full blur-3xl pointer-events-none" />
+        <div className="relative max-w-4xl mx-auto text-center">
+          <p className="text-xs font-semibold uppercase tracking-widest text-[#f97316] mb-4">Our story</p>
+          <h2 className="text-3xl md:text-5xl font-bold text-white mb-8">We built this because proposals were broken</h2>
+          <div className="space-y-6 text-lg text-[#b3b3b3] leading-relaxed">
+            <p>Proposify wanted $49/month. PandaDoc wanted $35. We built proposal software with the same features for $19/month on Starter and $29/month for unlimited proposals.</p>
+            <p>We were sending proposals in Google Docs, following up blind, and losing deals we never even knew were in play. Once we added view tracking, everything changed.</p>
+            <p className="text-white font-medium">That&apos;s ZiggyPitch. Built by people who were frustrated with losing deals in the dark.</p>
+          </div>
+          <div className="grid grid-cols-2 md:grid-cols-4 gap-4 mt-12">
+            {[
+              { value: '$19/mo', label: 'Starting price', color: '#f97316' },
+              { value: 'Unlimited', label: 'Proposals on Pro', color: '#0ea5e9' },
+              { value: 'Real-time', label: 'View notifications', color: '#84cc16' },
+              { value: '14 days', label: 'Free to try', color: '#8b5cf6' },
+            ].map((item, i) => (
+              <div key={i} className="bg-[#111111] border border-[#1f1f1f] rounded-xl p-5 text-center hover:border-[#f97316]/30 transition-colors">
+                <p className="text-2xl font-bold mb-1" style={{ color: item.color }}>{item.value}</p>
+                <p className="text-sm text-[#b3b3b3]">{item.label}</p>
+              </div>
+            ))}
+          </div>
+        </div>
+      </section>
+
+      {/* Pricing teaser */}
+      <section className="py-24 md:py-32 px-4 bg-gradient-to-b from-[#0d0d0d] via-[#0a0e14] to-[#0d0d0d]">
+        <div className="max-w-5xl mx-auto text-center">
+          <p className="text-xs font-semibold uppercase tracking-widest text-[#f97316] mb-4">Pricing</p>
+          <h2 className="text-3xl md:text-5xl font-bold text-white mb-4">Simple, honest pricing</h2>
+          <p className="text-lg text-[#b3b3b3] mb-12 max-w-2xl mx-auto leading-relaxed">Proposify charges $49/mo. PandaDoc charges $35–$65/mo. We start at $19/mo. Full features. No BS.</p>
+
+          {/* Competitor comparison */}
+          <div className="grid grid-cols-1 md:grid-cols-2 gap-4 max-w-2xl mx-auto mb-10">
+            {[
+              { name: 'Proposify', price: '$49/mo', note: 'Per user pricing' },
+              { name: 'PandaDoc', price: '$35–$65/mo', note: 'Essential to Business plans' },
+            ].map((comp) => (
+              <div key={comp.name} className="bg-[#111111] border border-[#1f1f1f] rounded-xl p-5 text-left opacity-60">
+                <p className="text-sm font-semibold text-[#b3b3b3] mb-1">{comp.name}</p>
+                <p className="text-xl font-bold text-white line-through decoration-red-500">{comp.price}</p>
+                <p className="text-xs text-[#b3b3b3] mt-1">{comp.note}</p>
               </div>
             ))}
           </div>
 
-          <div style={{
-            background: `rgba(249,115,22,0.06)`, border: `1px solid rgba(249,115,22,0.2)`,
-            borderRadius: 14, padding: "32px 36px",
-            display: "flex", flexWrap: "wrap", alignItems: "center", justifyContent: "space-between", gap: 20,
-          }}>
-            <div>
-              <h3 style={{ fontSize: 18, fontWeight: 700, color: "#fff", marginBottom: 6 }}>Need a custom proposal template?</h3>
-              <p style={{ fontSize: 15, color: "#888", maxWidth: 480, lineHeight: 1.6, margin: 0 }}>
-                We build custom templates for any industry or proposal type. Every plan includes onboarding support.
-              </p>
+          <div className="grid grid-cols-1 md:grid-cols-2 gap-6 max-w-2xl mx-auto mb-10">
+            <div className="bg-[#111111] border border-[#1f1f1f] rounded-2xl p-8 text-left">
+              <p className="text-sm font-semibold text-[#b3b3b3] uppercase tracking-wider mb-2">Starter</p>
+              <div className="flex items-end gap-1 mb-1"><span className="text-5xl font-bold text-white">$19</span><span className="text-[#b3b3b3] mb-2">/mo</span></div>
+              <p className="text-sm text-[#b3b3b3] mb-6">5 active proposals</p>
+              <Link href="https://app.ziggypitch.com/signup" className="block w-full text-center px-6 py-3 bg-[#f97316]/10 border border-[#f97316]/30 text-[#f97316] rounded-xl font-semibold hover:bg-[#f97316]/20 transition-all">Start free trial</Link>
             </div>
-            <a href="mailto:hello@ziggypitch.com" style={{
-              background: ACCENT, color: "#fff", textDecoration: "none",
-              padding: "13px 26px", borderRadius: 9, fontSize: 15, fontWeight: 700, whiteSpace: "nowrap", flexShrink: 0,
-            }}>
-              Contact Us →
-            </a>
+            <div className="bg-[#111111] border-2 border-[#f97316]/40 rounded-2xl p-8 text-left relative shadow-[0_0_40px_rgba(249,115,22,0.12)]">
+              <div className="absolute -top-3 left-6"><span className="px-3 py-1 bg-[#f97316] text-white text-xs font-bold rounded-full uppercase tracking-wide">Most Popular</span></div>
+              <p className="text-sm font-semibold text-[#b3b3b3] uppercase tracking-wider mb-2">Pro</p>
+              <div className="flex items-end gap-1 mb-1"><span className="text-5xl font-bold text-white">$29</span><span className="text-[#b3b3b3] mb-2">/mo</span></div>
+              <p className="text-sm text-[#b3b3b3] mb-6">Unlimited proposals · All features</p>
+              <Link href="https://app.ziggypitch.com/signup" className="block w-full text-center px-6 py-3 bg-[#f97316] text-white rounded-xl font-semibold hover:bg-[#f97316]/90 transition-all">Start free trial</Link>
+            </div>
           </div>
+          <Link href="/pricing" className="inline-flex items-center gap-2 text-[#f97316] hover:underline font-medium">
+            View full pricing and compare plans
+            <svg className="w-4 h-4" fill="none" viewBox="0 0 24 24" stroke="currentColor"><path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M17 8l4 4m0 0l-4 4m4-4H3" /></svg>
+          </Link>
         </div>
       </section>
 
-      {/* ── COMPARISON TABLE ── */}
-      <section style={{ padding: "96px 24px", maxWidth: 960, margin: "0 auto" }}>
-        <div style={{ textAlign: "center", marginBottom: 48 }}>
-          <h2 style={{ fontSize: "clamp(28px,4vw,42px)", fontWeight: 700, letterSpacing: "-0.8px", marginBottom: 12 }}>
-            ZiggyPitch vs Proposify
-          </h2>
-          <p style={{ color: "#666", fontSize: 16 }}>
-            Every feature you actually use. 41% cheaper. Cancel anytime.
-          </p>
-        </div>
-
-        <div style={{ overflowX: "auto" }}>
-          <table style={{ width: "100%", borderCollapse: "collapse", fontSize: 15 }}>
-            <thead>
-              <tr>
-                <th style={{ textAlign: "left", padding: "14px 20px", color: "#555", fontWeight: 600, fontSize: 13, borderBottom: "1px solid #1f1f1f" }}>Feature</th>
-                <th style={{ textAlign: "center", padding: "14px 20px", color: ACCENT, fontWeight: 700, fontSize: 15, borderBottom: "1px solid #1f1f1f", background: `rgba(249,115,22,0.05)` }}>ZiggyPitch</th>
-                <th style={{ textAlign: "center", padding: "14px 20px", color: "#555", fontWeight: 600, fontSize: 13, borderBottom: "1px solid #1f1f1f" }}>Proposify</th>
-              </tr>
-            </thead>
-            <tbody>
-              {[
-                ["Starting price", "$19/mo", "$49/mo"],
-                ["Unlimited proposals", "✅ Pro plan ($29/mo)", "❌ Limited on base plan"],
-                ["E-signature included", "✅ Both plans", "✅ Yes"],
-                ["Video embeds", "✅ Yes (Pro)", "❌ Not available"],
-                ["Viewed notifications", "✅ Yes (Pro)", "✅ Yes"],
-                ["Proposal analytics", "✅ Full (Pro)", "✅ Basic"],
-                ["Time-on-page per section", "✅ Yes (Pro)", "❌ Not available"],
-                ["Content library", "✅ Yes (Pro)", "✅ Yes"],
-                ["Custom branding", "✅ Yes (Pro)", "✅ Paid plans"],
-                ["Accept/decline tracking", "✅ With timestamp", "✅ Yes"],
-                ["Per-seat pricing", "No — flat rate", "Yes — adds up fast"],
-                ["14-day free trial", "✅ No card needed", "✅ Available"],
-              ].map(([feature, ziggy, them], i) => (
-                <tr key={feature} style={{ background: i % 2 === 0 ? "transparent" : "#0d0d0d" }}>
-                  <td style={{ padding: "14px 20px", color: "#888", borderBottom: "1px solid #161616" }}>{feature}</td>
-                  <td style={{ padding: "14px 20px", color: "#fff", textAlign: "center", borderBottom: "1px solid #161616", background: `rgba(249,115,22,0.03)`, fontWeight: 500 }}>{ziggy}</td>
-                  <td style={{ padding: "14px 20px", color: "#555", textAlign: "center", borderBottom: "1px solid #161616" }}>{them}</td>
-                </tr>
-              ))}
-            </tbody>
-          </table>
-        </div>
-
-        <div style={{
-          marginTop: 24, background: `rgba(249,115,22,0.06)`, border: `1px solid rgba(249,115,22,0.2)`,
-          borderRadius: 12, padding: "20px 24px",
-        }}>
-          <p style={{ fontSize: 15, color: "#ccc", lineHeight: 1.7, margin: 0 }}>
-            <strong style={{ color: ACCENT }}>Bottom line:</strong> Proposify starts at $49/mo for their base plan. Our Pro is $29/mo — unlimited proposals, video embeds, full analytics, e-sign included. That's <strong style={{ color: ACCENT }}>41% cheaper</strong> with every feature you actually use.
-          </p>
-        </div>
-
-        <div style={{ marginTop: 16, textAlign: "center" }}>
-          <a href="/vs/proposify" style={{ color: ACCENT, fontSize: 14, textDecoration: "underline" }}>
-            See the full ZiggyPitch vs Proposify comparison →
-          </a>
-        </div>
-      </section>
-
-      {/* ── PRICING ── */}
-      <section id="pricing" style={{ padding: "96px 24px", background: "#080808", borderTop: "1px solid #1f1f1f", borderBottom: "1px solid #1f1f1f" }}>
-        <div style={{ maxWidth: 800, margin: "0 auto" }}>
-          <div style={{ textAlign: "center", marginBottom: 56 }}>
-            <h2 style={{ fontSize: "clamp(28px,4vw,42px)", fontWeight: 700, letterSpacing: "-0.8px", marginBottom: 12 }}>
-              Simple pricing. No surprises.
-            </h2>
-            <p style={{ color: "#666", fontSize: 16 }}>
-              Two plans. Everything included. No per-seat fees.
-            </p>
+      {/* FAQ */}
+      <section className="py-24 md:py-32 px-4 bg-[#080808]">
+        <div className="max-w-3xl mx-auto">
+          <div className="text-center mb-16">
+            <p className="text-xs font-semibold uppercase tracking-widest text-[#f97316] mb-4">FAQ</p>
+            <h2 className="text-3xl md:text-5xl font-bold text-white mb-4">Common questions</h2>
+            <p className="text-lg text-[#b3b3b3]">Everything you need to know before you start.</p>
           </div>
-
-          <div style={{ display: "grid", gridTemplateColumns: "repeat(auto-fit,minmax(280px,1fr))", gap: 24 }}>
-            {[
-              {
-                name: "Starter", price: "$19", sub: "/mo", highlight: false,
-                desc: "For freelancers and solo operators sending a handful of proposals per month.",
-                features: ["5 active proposals", "10 templates", "Basic analytics", "E-signature included", "Accept/decline tracking", "Email support"],
-                cta: "Start Free Trial",
-              },
-              {
-                name: "Pro", price: "$29", sub: "/mo", highlight: true,
-                desc: "For agencies and consultants who live in proposals and need every edge.",
-                features: ["Unlimited proposals", "All templates", "Full analytics (time-on-page, scroll depth)", "Viewed notifications", "Video embeds", "Content library", "Custom branding", "Priority support"],
-                cta: "Start Free Trial",
-              },
-            ].map(({ name, price, sub, highlight, desc, features, cta }) => (
-              <div key={name} style={{
-                background: "#111",
-                border: highlight ? `2px solid ${ACCENT}` : "1px solid #1f1f1f",
-                borderRadius: 20, padding: "36px 28px",
-                position: "relative",
-              }}>
-                {highlight && (
-                  <div style={{
-                    position: "absolute", top: -14, left: "50%", transform: "translateX(-50%)",
-                    background: ACCENT, color: "#fff", fontSize: 11, fontWeight: 700,
-                    padding: "4px 14px", borderRadius: 99, letterSpacing: "0.08em", textTransform: "uppercase", whiteSpace: "nowrap",
-                  }}>Most Popular</div>
+          <div className="space-y-3">
+            {faqs.map((faq, i) => (
+              <div key={i} className="bg-[#111111] border border-[#1f1f1f] rounded-2xl overflow-hidden hover:border-[#f97316]/20 transition-colors">
+                <button className="w-full flex items-center justify-between p-6 md:p-8 text-left" onClick={() => setOpenFaq(openFaq === i ? null : i)}>
+                  <span className="text-white font-semibold text-lg pr-4">{faq.q}</span>
+                  <svg className={`w-5 h-5 text-[#f97316] flex-shrink-0 transition-transform ${openFaq === i ? 'rotate-180' : ''}`} fill="none" viewBox="0 0 24 24" stroke="currentColor"><path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M19 9l-7 7-7-7" /></svg>
+                </button>
+                {openFaq === i && (
+                  <div className="px-6 md:px-8 pb-6 md:pb-8">
+                    <p className="text-[#b3b3b3] text-lg leading-relaxed">{faq.a}</p>
+                  </div>
                 )}
-                <div style={{ fontSize: 13, fontWeight: 700, color: highlight ? ACCENT : "#555", textTransform: "uppercase", letterSpacing: "0.1em", marginBottom: 12 }}>{name}</div>
-                <div style={{ display: "flex", alignItems: "baseline", gap: 4, marginBottom: 8 }}>
-                  <span style={{ fontSize: 52, fontWeight: 700, color: "#fff", letterSpacing: "-2px" }}>{price}</span>
-                  <span style={{ fontSize: 16, color: "#555" }}>{sub}</span>
-                </div>
-                <p style={{ fontSize: 14, color: "#666", lineHeight: 1.6, marginBottom: 28 }}>{desc}</p>
-                <ul style={{ listStyle: "none", padding: 0, marginBottom: 28 }}>
-                  {features.map(item => (
-                    <li key={item} style={{ padding: "7px 0", fontSize: 14, color: "#ccc", display: "flex", alignItems: "center", gap: 10, borderBottom: "1px solid #1a1a1a" }}>
-                      <span style={{ color: ACCENT, fontWeight: 700, flexShrink: 0 }}>✓</span> {item}
-                    </li>
-                  ))}
-                </ul>
-                <a href={SIGNUP} style={{
-                  display: "block", textDecoration: "none", textAlign: "center",
-                  background: highlight ? ACCENT : "transparent",
-                  color: highlight ? "#fff" : "#fff",
-                  border: highlight ? "none" : "1px solid #333",
-                  padding: "14px", borderRadius: 10, fontSize: 15, fontWeight: 700,
-                }}>
-                  {cta}
-                </a>
               </div>
             ))}
           </div>
-
-          <p style={{ textAlign: "center", marginTop: 24, fontSize: 13, color: "#444" }}>
-            All plans include a 14-day free trial · No credit card required · Cancel anytime
-          </p>
-
-          <div style={{
-            marginTop: 32, background: "#111", border: "1px solid #1f1f1f", borderRadius: 14,
-            padding: "22px 24px", textAlign: "center",
-          }}>
-            <p style={{ color: "#888", fontSize: 14, lineHeight: 1.6 }}>
-              🏢 <strong style={{ color: "#fff" }}>Running a full business?</strong> Get all 10 ZiggyTech apps — including ZiggyPitch — for{" "}
-              <strong style={{ color: ACCENT }}>$179/mo flat</strong> with the ZiggyTech Business Suite.{" "}
-              <a href="https://ziggybusiness.com" style={{ color: ACCENT, textDecoration: "underline" }}>Learn more →</a>
-            </p>
-          </div>
+          <p className="text-center text-[#b3b3b3] mt-8">More questions? <Link href="/faq" className="text-[#f97316] hover:underline">View full FAQ</Link></p>
         </div>
       </section>
 
-      {/* ── FAQ ── */}
-      <section style={{ padding: "96px 24px", maxWidth: 740, margin: "0 auto" }}>
-        <h2 style={{ fontSize: "clamp(28px,4vw,38px)", fontWeight: 700, letterSpacing: "-0.6px", marginBottom: 48, textAlign: "center" }}>
-          Questions? We've got answers.
-        </h2>
-
-        <div style={{ display: "flex", flexDirection: "column", gap: 2 }}>
-          {[
-            { q: "How much does ZiggyPitch cost?", a: "Starter is $19/mo — 5 active proposals, 10 templates, basic analytics, e-sign. Pro is $29/mo — unlimited proposals, full analytics, viewed notifications, video embeds, content library, and custom branding. Both start with a 14-day free trial, no credit card required." },
-            { q: "How is ZiggyPitch different from Proposify?", a: "Proposify starts at $49/mo for their base plan. ZiggyPitch Pro is $29/mo — unlimited proposals, video embeds, full analytics, e-sign included. That's 41% cheaper with every feature you actually use. Plus Proposify has per-seat pricing that adds up fast; ZiggyPitch is flat-rate." },
-            { q: "Does ZiggyPitch have e-signature built in?", a: "Yes. E-signature is included on both Starter and Pro plans — no DocuSign, no HelloSign, no third-party tool needed. Your clients sign directly inside the proposal on any device. It's legally binding and you get a timestamped record of acceptance." },
-            { q: "Will I know when a client opens my proposal?", a: "Yes — on the Pro plan. You get a 'viewed' notification the moment a prospect opens your proposal. You also see time spent per section and scroll depth, so you know exactly what they read and what they skipped before you follow up." },
-            { q: "Can I add video to my proposals?", a: "Yes, on the Pro plan. Embed a personal intro video at the top of any proposal. Your client sees your face, hears your voice, and connects with you before they read a single word. It's one of the highest-impact features for improving close rates." },
-            { q: "How does the 14-day free trial work?", a: "Sign up and get 14 days free — no credit card required. Full access to your plan's features from day one. If it's not for you, just walk away. Nothing to cancel, no automatic charges." },
-          ].map(({ q, a }) => (
-            <details key={q} style={{ background: "#111", border: "1px solid #1f1f1f", borderRadius: 10, overflow: "hidden" }}>
-              <summary style={{
-                padding: "20px 24px", fontSize: 16, fontWeight: 600, color: "#fff",
-                cursor: "pointer", listStyle: "none", display: "flex", justifyContent: "space-between", alignItems: "center",
-              }}>
-                {q}
-                <span style={{ color: ACCENT, fontSize: 20, fontWeight: 400, flexShrink: 0 }}>+</span>
-              </summary>
-              <div style={{ padding: "0 24px 20px", fontSize: 15, color: "#777", lineHeight: 1.7, borderTop: "1px solid #1a1a1a" }}>
-                <p style={{ marginTop: 16 }}>{a}</p>
-              </div>
-            </details>
-          ))}
+      {/* CTA */}
+      <section className="relative overflow-hidden py-24 md:py-32 px-4 bg-gradient-to-br from-[#080c10] via-[#0c1520] to-[#080c10]">
+        <div className="absolute inset-0 bg-[#f97316]/4 blur-3xl pointer-events-none" />
+        <div className="relative max-w-3xl mx-auto text-center">
+          <h2 className="text-4xl md:text-6xl font-bold text-white mb-6 leading-tight">Ready to send proposals<br /><span style={{ color: '#f97316' }}>that close?</span></h2>
+          <p className="text-xl text-[#b3b3b3] mb-10 leading-relaxed">Track opens. Collect signatures. Get paid.</p>
+          <div className="flex flex-col sm:flex-row items-center justify-center gap-4">
+            <Link href="https://app.ziggypitch.com/signup" className="w-full sm:w-auto inline-flex items-center justify-center gap-2 px-10 py-5 bg-[#f97316] text-white rounded-xl font-bold text-xl hover:bg-[#f97316]/90 hover:scale-105 transition-all shadow-[0_0_40px_rgba(249,115,22,0.3)]">
+              Start Free Trial
+              <svg className="w-6 h-6" fill="none" viewBox="0 0 24 24" stroke="currentColor"><path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M17 8l4 4m0 0l-4 4m4-4H3" /></svg>
+            </Link>
+            <Link href="/pricing" className="w-full sm:w-auto inline-flex items-center justify-center gap-2 px-10 py-5 bg-[#f97316]/10 border border-[#f97316]/30 text-[#f97316] rounded-xl font-bold text-xl hover:bg-[#f97316]/20 transition-all">View Pricing</Link>
+          </div>
+          <p className="text-sm text-[#b3b3b3]/60 mt-6">14-day free trial · No credit card required · Cancel anytime</p>
         </div>
       </section>
 
-      {/* ── FINAL CTA ── */}
-      <section style={{
-        padding: "100px 24px", textAlign: "center",
-        background: "linear-gradient(180deg,#0a0a0a 0%,#0d0500 100%)",
-        borderTop: "1px solid #1f1f1f",
-      }}>
-        <h2 style={{ fontSize: "clamp(36px,5vw,58px)", fontWeight: 700, letterSpacing: "-1.5px", marginBottom: 20, lineHeight: 1.1 }}>
-          Stop sending proposals<br />
-          <span style={{
-            background: `linear-gradient(135deg,#fff 0%,${ACCENT} 100%)`,
-            WebkitBackgroundClip: "text", WebkitTextFillColor: "transparent", backgroundClip: "text",
-          }}>that look like everyone else&apos;s.</span>
-        </h2>
-        <p style={{ fontSize: 18, color: "#555", marginBottom: 40 }}>
-          14 days free. No credit card. Cancel anytime.
-        </p>
-        <a href={SIGNUP} style={{
-          display: "inline-block", background: ACCENT, color: "#fff", textDecoration: "none",
-          padding: "18px 40px", borderRadius: 12, fontSize: 18, fontWeight: 700, letterSpacing: "-0.2px",
-        }}>
-          Start Free Trial →
-        </a>
-      </section>
-
-      {/* ── FOOTER ── */}
-      <footer style={{ background: "#050505", borderTop: "1px solid #111", padding: "40px 24px" }}>
-        <div style={{ maxWidth: 1100, margin: "0 auto", display: "flex", flexDirection: "column", alignItems: "center", gap: 20, textAlign: "center" }}>
-          <div style={{ display: "flex", gap: 28, flexWrap: "wrap", justifyContent: "center" }}>
-            {[["Home", "/"], ["Features", "#features"], ["Compare", "/vs/proposify"], ["Pricing", "#pricing"], ["Blog", "/blog"], ["Privacy", "/privacy"], ["Terms", "/terms"], ["Sign In", LOGIN]].map(([label, href]) => (
-              <a key={label} href={href} style={{ color: "#555", fontSize: 14, textDecoration: "none", fontWeight: 500 }}>{label}</a>
-            ))}
+      {/* Footer */}
+      <footer className="border-t border-[#1f1f1f] py-12 px-4 bg-[#0a0a0a]">
+        <div className="max-w-7xl mx-auto">
+          <div className="grid grid-cols-2 md:grid-cols-4 gap-8 mb-8">
+            <div>
+              <p className="font-bold text-white mb-4"><span style={{ color: '#f97316' }}>Ziggy</span><span className="text-white">Pitch</span></p>
+              <p className="text-sm text-[#b3b3b3] leading-relaxed">Proposal software that helps you close more deals.</p>
+            </div>
+            <div>
+              <p className="text-xs font-semibold uppercase tracking-widest text-[#b3b3b3] mb-4">Product</p>
+              {[['Features', '/features'], ['Pricing', '/pricing'], ['Suite', '/suite'], ['Changelog', '/changelog'], ['Security', '/security']].map(([label, href]) => (
+                <Link key={label} href={href} className="block text-sm text-[#b3b3b3] hover:text-white mb-2 transition-colors">{label}</Link>
+              ))}
+            </div>
+            <div>
+              <p className="text-xs font-semibold uppercase tracking-widest text-[#b3b3b3] mb-4">Compare</p>
+              {[['vs Proposify', '/compare/proposify'], ['vs PandaDoc', '/compare/pandadoc'], ['FAQ', '/faq'], ['Blog', '/blog']].map(([label, href]) => (
+                <Link key={label} href={href} className="block text-sm text-[#b3b3b3] hover:text-white mb-2 transition-colors">{label}</Link>
+              ))}
+            </div>
+            <div>
+              <p className="text-xs font-semibold uppercase tracking-widest text-[#b3b3b3] mb-4">Legal</p>
+              {[['Privacy Policy', '/privacy'], ['Terms of Service', '/terms'], ['Cookie Policy', '/cookies']].map(([label, href]) => (
+                <Link key={label} href={href} className="block text-sm text-[#b3b3b3] hover:text-white mb-2 transition-colors">{label}</Link>
+              ))}
+            </div>
           </div>
-          <p style={{ fontSize: 13, color: "#333" }}>
-            Part of{" "}
-            <a href="https://ziggybusiness.com" style={{ color: "#555", textDecoration: "none" }}>ZiggyTech Business Suite</a>
-            {" · "}
-            <a href="https://ziggybusiness.com" style={{ color: "#555", textDecoration: "none" }}>ziggybusiness.com</a>
-          </p>
-          <p style={{ fontSize: 13, color: "#2a2a2a" }}>© 2026 ZiggyPitch. All rights reserved.</p>
+          <div className="border-t border-[#1f1f1f] pt-8 flex flex-col sm:flex-row items-center justify-between gap-4">
+            <p className="text-sm text-[#b3b3b3]">© 2026 ZiggyTech Ventures LLC</p>
+            <Link href="https://ziggybusiness.com" className="text-sm text-[#b3b3b3] hover:text-white transition-colors">Part of the ZiggyTech Business Suite →</Link>
+          </div>
         </div>
       </footer>
-    </>
+    </div>
   )
 }
