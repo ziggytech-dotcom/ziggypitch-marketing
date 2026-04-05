@@ -17,7 +17,7 @@ const rows = [
   { feature: `Priority support`, ziggy: true },
 ]
 const reasons = [
-  `Save money every month — Proposify charges $49/mo. ZiggyPitch starts at $19/mo.`,
+  `Save money every month — PandaDoc charges $35/mo. ZiggyPitch starts at $19/mo.`,
   `ZiggyPitch is built for how small businesses actually operate — not enterprise workflows.`,
   `Get up and running in under an hour. No lengthy onboarding required.`,
   `ZiggyPitch integrates natively with all 9 other ZiggyTech apps. No API setup needed.`,
@@ -30,9 +30,9 @@ export default function ComparePage() {
       <section className="relative overflow-hidden pt-20 pb-20 px-4">
         <div className="absolute top-0 left-1/2 -translate-x-1/2 w-[600px] h-[300px] bg-[#f97316]/8 rounded-full blur-3xl pointer-events-none" />
         <div className="max-w-4xl mx-auto text-center relative">
-          <div className="inline-flex items-center gap-2 bg-[#1a1a1a] border border-[#2d2d2d] rounded-full px-4 py-1.5 text-sm text-[#b3b3b3] mb-8">ZiggyPitch vs Proposify</div>
+          <div className="inline-flex items-center gap-2 bg-[#1a1a1a] border border-[#2d2d2d] rounded-full px-4 py-1.5 text-sm text-[#b3b3b3] mb-8">ZiggyPitch vs PandaDoc</div>
           <h1 className="text-5xl md:text-7xl font-bold text-white mb-6">
-            <span className="text-[#f97316]">ZiggyPitch</span> vs <span className="text-[#b3b3b3]">Proposify</span>
+            <span className="text-[#f97316]">ZiggyPitch</span> vs <span className="text-[#b3b3b3]">PandaDoc</span>
           </h1>
           <p className="text-xl text-[#b3b3b3] max-w-2xl mx-auto mb-10">The honest comparison. Same core features. Better pricing for small teams.</p>
           <Link href="https://app.ziggypitch.com/signup" className="bg-[#f97316] text-white rounded-xl px-8 py-4 font-semibold text-lg hover:opacity-90 inline-block">Try ZiggyPitch Free</Link>
@@ -42,7 +42,7 @@ export default function ComparePage() {
         <div className="max-w-4xl mx-auto">
           <h2 className="text-2xl font-bold text-white mb-6">The verdict</h2>
           <div className="bg-[#1a1a1a] border border-[#2d2d2d] rounded-xl p-6">
-            <p className="text-[#b3b3b3] leading-relaxed">Proposify charges $49/mo and limits you on lower tiers. ZiggyPitch Pro is $29/mo with unlimited proposals, view tracking, e-signatures, and Stripe payments. For most agencies and freelancers, that's a 40% savings with the same core feature set.</p>
+            <p className="text-[#b3b3b3] leading-relaxed">PandaDoc starts at $35/mo but limits documents on the lowest tier. The full feature set requires the $65/mo Business plan. ZiggyPitch Pro includes view tracking, video embeds, and Stripe payments at $29/mo.</p>
           </div>
         </div>
       </section>
@@ -56,8 +56,8 @@ export default function ComparePage() {
               <p className="text-sm text-[#f97316] mt-2">Full ZiggyTech Suite integration</p>
             </div>
             <div className="bg-[#111111] border border-[#1f1f1f] rounded-2xl p-8 text-center">
-              <p className="text-xl font-bold text-white mb-2">Proposify</p>
-              <p className="text-5xl font-bold text-white mb-1">$49<span className="text-xl text-[#b3b3b3]">/mo</span></p>
+              <p className="text-xl font-bold text-white mb-2">PandaDoc</p>
+              <p className="text-5xl font-bold text-white mb-1">$35<span className="text-xl text-[#b3b3b3]">/mo</span></p>
               <p className="text-sm text-[#b3b3b3] mt-2">No suite integration</p>
             </div>
           </div>
@@ -69,7 +69,7 @@ export default function ComparePage() {
             <div className="grid grid-cols-3 bg-[#1a1a1a] border-b border-[#1f1f1f]">
               <div className="p-4 text-sm font-semibold text-[#b3b3b3]">Feature</div>
               <div className="p-4 text-sm font-semibold text-[#f97316] text-center">ZiggyPitch</div>
-              <div className="p-4 text-sm font-semibold text-[#b3b3b3] text-center">Proposify</div>
+              <div className="p-4 text-sm font-semibold text-[#b3b3b3] text-center">PandaDoc</div>
             </div>
             {rows.map((r) => (
               <div key={r.feature} className="grid grid-cols-3 border-b border-[#1f1f1f] last:border-0">

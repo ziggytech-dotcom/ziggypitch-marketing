@@ -1,172 +1,64 @@
-import type { Metadata } from "next"
+import Link from 'next/link'
+import { MarketingNav } from '@/app/components/Nav'
+import { MarketingFooter } from '@/app/components/Footer'
 
-export const metadata: Metadata = {
-  title: "Features — ZiggyPitch",
-  description: "Everything ZiggyPitch includes. See every feature built for small business teams.",
-}
-
-const ACCENT = "#f97316"
-const SIGNUP = "https://app.ziggypitch.com/signup"
-
-const sections = [
-  {
-    name: "Core Features",
-    features: [
-            {
-              icon: "📄",
-              title: "Proposal Builder",
-              desc: "Drag-and-drop sections, custom branding, and rich text. Build proposals that look like you hired a designer.",
-            },
-            {
-              icon: "🎥",
-              title: "Video Embeds",
-              desc: "Embed Loom, YouTube, or Vimeo videos directly inside proposals. Show, don't tell.",
-            },
-            {
-              icon: "✍️",
-              title: "Built-in E-Signature",
-              desc: "Clients sign directly inside the proposal. No need for a separate DocuSign account.",
-            },
-            {
-              icon: "📊",
-              title: "Proposal Analytics",
-              desc: "See when a prospect opened your proposal, how long they spent on each section, and when they're ready to sign.",
-            },
-            {
-              icon: "💰",
-              title: "Custom Pricing Tables",
-              desc: "Interactive pricing tables. Let clients select options and quantities — the total updates live.",
-            },
-            {
-              icon: "📚",
-              title: "Content Library",
-              desc: "Save reusable sections, case studies, team bios, and pricing blocks. Build faster every time.",
-            },
-    ],
-  },
-  {
-    name: "Integrations",
-    features: [
-            {
-              icon: "🔗",
-              title: "ZiggyHQ CRM",
-              desc: "Send proposals directly from ZiggyHQ. Signed proposals auto-update deal status.",
-            },
-            {
-              icon: "📧",
-              title: "Email Delivery",
-              desc: "Send proposals via email with open and read tracking.",
-            },
-            {
-              icon: "🌐",
-              title: "Shareable Links",
-              desc: "Share a live proposal link. Clients can comment, approve, and sign in the browser.",
-            },
-    ],
-  },
-  {
-    name: "Advanced",
-    features: [
-            {
-              icon: "⏰",
-              title: "Follow-Up Reminders",
-              desc: "Auto-send reminders to clients who haven't opened or signed yet.",
-            },
-            {
-              icon: "🎨",
-              title: "Custom Branding",
-              desc: "Your logo, colors, and fonts on every proposal.",
-            },
-            {
-              icon: "📁",
-              title: "PDF Export",
-              desc: "Download any proposal as a polished PDF for your records.",
-            },
-    ],
-  },
+const features = [
+  { title: `Proposal Templates`, desc: `Start from professionally designed templates. Customize for your brand and reuse with one click.`, bullets: [`Template library included`, `Save custom templates`, `Section reordering`, `Cover page builder`, `Pricing table builder`, `Template analytics`] },
+  { title: `E-Signatures`, desc: `Clients sign directly inside the proposal. No separate DocuSign step. Instant notification on sign.`, bullets: [`In-proposal signing`, `Instant notification`, `Legally binding (ESIGN/UETA)`, `Audit trail included`, `Multi-signer support`, `Certificate download`] },
+  { title: `View Tracking`, desc: `See exactly when a client opens your proposal, how long they spend on each section, and what they focus on.`, bullets: [`Open notifications`, `Time-per-section tracking`, `Visit frequency data`, `Page scroll depth`, `Multi-viewer tracking`, `Follow-up timing signals`] },
+  { title: `Video Embeds`, desc: `Embed a personalized intro video or product demo directly inside your proposal.`, bullets: [`YouTube and Vimeo embed`, `Loom integration`, `Custom video upload`, `Autoplay options`, `Video view tracking`, `Thumbnail customization`] },
+  { title: `Content Library`, desc: `Save your best proposal sections and reuse them across proposals with one click.`, bullets: [`Reusable content blocks`, `Image and media library`, `Pricing table library`, `Team bio blocks`, `Case study blocks`, `Version history`] },
+  { title: `Stripe Payments`, desc: `Add a payment link directly to your proposal. Clients pay a deposit or full amount when they accept.`, bullets: [`Pay-on-accept option`, `Deposit collection`, `Stripe integration`, `Auto-receipt`, `Recurring payment setup`, `Invoice auto-generated`] },
 ]
 
 export default function FeaturesPage() {
   return (
-    <>
-      <style>{`@media(max-width:768px){.nav-links{display:none!important}}`}</style>
-      <nav style={{
-        position: "sticky", top: 0, zIndex: 100,
-        background: "rgba(10,10,10,0.92)", backdropFilter: "blur(12px)",
-        borderBottom: "1px solid #1f1f1f", padding: "0 24px",
-      }}>
-        <div style={{ maxWidth: 1120, margin: "0 auto", height: 64, display: "flex", alignItems: "center", justifyContent: "space-between" }}>
-          <a href="/" style={{ fontSize: 22, fontWeight: 700, color: "#fff", textDecoration: "none", letterSpacing: "-0.5px" }}>
-            Ziggy<span style={{ color: ACCENT }}>Pitch</span>
-          </a>
-          <div className="nav-links" style={{ display: "flex", gap: 28 }}>
-            {[["Features", "/features"], ["Pricing", "/#pricing"], ["Contact", "/contact"], ["Blog", "/blog"], ["Sign In", `https://app.ziggypitch.com/login`]].map(([l, h]) => (
-              <a key={l} href={h} style={{ color: "#888", fontSize: 15, textDecoration: "none", fontWeight: 500 }}>{l}</a>
-            ))}
-          </div>
-          <a href={SIGNUP} style={{ background: ACCENT, color: "#fff", textDecoration: "none", padding: "9px 20px", borderRadius: 8, fontSize: 14, fontWeight: 700 }}>
-            Start Free Trial
-          </a>
+    <div className="bg-[#0a0a0a] min-h-screen" style={{ fontFamily: 'Space Grotesk, sans-serif' }}>
+      <MarketingNav />
+      <section className="relative overflow-hidden pt-20 pb-16 px-4">
+        <div className="absolute top-0 left-1/2 -translate-x-1/2 w-[600px] h-[300px] bg-[#f97316]/8 rounded-full blur-3xl pointer-events-none" />
+        <div className="max-w-4xl mx-auto text-center relative">
+          <p className="text-xs font-semibold uppercase tracking-widest text-[#f97316] mb-4">Features</p>
+          <h1 className="text-5xl md:text-7xl font-bold text-white mb-6">Everything ZiggyPitch can do</h1>
+          <p className="text-xl text-[#b3b3b3] max-w-2xl mx-auto mb-8">Every feature explained. No fluff.</p>
+          <Link href="https://app.ziggypitch.com/signup" className="inline-flex items-center gap-2 px-8 py-4 bg-[#f97316] text-white rounded-xl font-semibold text-lg hover:opacity-90 transition-all">
+            Start Free Trial — 14 days free
+          </Link>
         </div>
-      </nav>
-
-      <section style={{ padding: "80px 24px 40px", textAlign: "center", maxWidth: 680, margin: "0 auto" }}>
-        <h1 style={{ fontSize: "clamp(36px,5vw,56px)", fontWeight: 700, letterSpacing: "-1.5px", marginBottom: 16 }}>
-          Everything ZiggyPitch includes
-        </h1>
-        <p style={{ fontSize: 18, color: "#777", lineHeight: 1.6, marginBottom: 36 }}>
-          Every feature. One flat price. No paywalls, no feature tiers.
-        </p>
-        <a href={SIGNUP} style={{
-          display: "inline-block", background: ACCENT, color: "#fff", textDecoration: "none",
-          padding: "13px 26px", borderRadius: 10, fontSize: 15, fontWeight: 700,
-        }}>
-          Start Free Trial — $29/mo after trial
-        </a>
       </section>
-
-      <section style={{ maxWidth: 1100, margin: "0 auto", padding: "60px 24px 100px" }}>
-        {sections.map((section) => (
-          <div key={section.name} style={{ marginBottom: 64 }}>
-            <h2 style={{ fontSize: 22, fontWeight: 700, letterSpacing: "-0.3px", marginBottom: 24, color: "#fff", borderBottom: "1px solid #1f1f1f", paddingBottom: 16 }}>
-              {section.name}
-            </h2>
-            <div style={{ display: "grid", gridTemplateColumns: "repeat(auto-fill,minmax(280px,1fr))", gap: 16 }}>
-              {section.features.map((f) => (
-                <div key={f.title} style={{ background: "#111", border: "1px solid #1f1f1f", borderRadius: 14, padding: "24px 22px" }}>
-                  <div style={{ fontSize: 28, marginBottom: 12 }}>{f.icon}</div>
-                  <h3 style={{ fontSize: 16, fontWeight: 700, color: "#fff", marginBottom: 8 }}>{f.title}</h3>
-                  <p style={{ fontSize: 13, color: "#666", lineHeight: 1.65 }}>{f.desc}</p>
-                </div>
-              ))}
+      <section className="py-16 px-4">
+        <div className="max-w-5xl mx-auto space-y-16">
+          {features.map((f, i) => (
+            <div key={f.title} className={`flex flex-col ${i % 2 === 0 ? 'md:flex-row' : 'md:flex-row-reverse'} gap-12 items-start`}>
+              <div className="flex-1">
+                <h2 className="text-3xl font-bold text-white mb-4">{f.title}</h2>
+                <p className="text-lg text-[#b3b3b3] leading-relaxed mb-6">{f.desc}</p>
+                <ul className="space-y-2">
+                  {f.bullets.map((b) => (
+                    <li key={b} className="flex items-center gap-3 text-[#b3b3b3]">
+                      <div className="w-5 h-5 rounded-full bg-[#f97316]/20 border border-[#f97316]/40 flex items-center justify-center flex-shrink-0">
+                        <svg className="w-3 h-3 text-[#f97316]" fill="none" viewBox="0 0 24 24" stroke="currentColor"><path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2.5} d="M5 13l4 4L19 7" /></svg>
+                      </div>
+                      {b}
+                    </li>
+                  ))}
+                </ul>
+              </div>
+              <div className="flex-1 bg-[#111111] border border-[#1f1f1f] rounded-2xl aspect-video flex items-center justify-center">
+                <p className="text-[#555] text-sm">Screenshot coming soon</p>
+              </div>
             </div>
-          </div>
-        ))}
-
-        {/* Suite callout */}
-        <div style={{ background: `rgba(249,115,22,0.06)`, border: `1px solid rgba(249,115,22,0.2)`, borderRadius: 16, padding: "32px 36px", textAlign: "center" }}>
-          <h3 style={{ fontSize: 20, fontWeight: 700, marginBottom: 10 }}>Part of the ZiggyTech Business Suite</h3>
-          <p style={{ fontSize: 15, color: "#666", marginBottom: 24, maxWidth: 560, margin: "0 auto 24px" }}>
-            ZiggyPitch is one of 10 integrated apps. Get all of them — CRM, payroll, docs, scheduling, and more — for 
-            <strong style={{ color: "#fff" }}>$179/mo flat</strong>.
-          </p>
-          <a href="https://ziggybusiness.com" style={{
-            display: "inline-block", background: ACCENT, color: "#fff", textDecoration: "none",
-            padding: "12px 24px", borderRadius: 9, fontSize: 14, fontWeight: 700,
-          }}>
-            See the Full Suite →
-          </a>
-        </div>
-      </section>
-
-      <footer style={{ background: "#050505", borderTop: "1px solid #111", padding: "40px 24px", textAlign: "center" }}>
-        <div style={{ display: "flex", gap: 24, flexWrap: "wrap", justifyContent: "center", marginBottom: 16 }}>
-          {[["Home", "/"], ["Features", "/features"], ["Pricing", "/#pricing"], ["Contact", "/contact"], ["Blog", "/blog"]].map(([l, h]) => (
-            <a key={l} href={h} style={{ color: "#555", fontSize: 14, textDecoration: "none" }}>{l}</a>
           ))}
         </div>
-        <p style={{ fontSize: 13, color: "#2a2a2a" }}>© 2026 ZiggyPitch. All rights reserved.</p>
-      </footer>
-    </>
+      </section>
+      <section className="py-24 px-4 text-center">
+        <div className="max-w-2xl mx-auto">
+          <h2 className="text-4xl font-bold text-white mb-6">Ready to see it in action?</h2>
+          <p className="text-xl text-[#b3b3b3] mb-8">14-day free trial. No credit card required.</p>
+          <Link href="https://app.ziggypitch.com/signup" className="inline-flex items-center gap-2 px-10 py-5 bg-[#f97316] text-white rounded-xl font-bold text-xl hover:opacity-90 transition-all">Start Free Trial</Link>
+        </div>
+      </section>
+      <MarketingFooter />
+    </div>
   )
 }
