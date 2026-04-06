@@ -39,8 +39,8 @@ export default function ContactPage() {
       <section style={{ maxWidth: 900, margin: "0 auto", padding: "0 24px 80px", display: "grid", gridTemplateColumns: "repeat(auto-fit,minmax(280px,1fr))", gap: 24 }}>
         {/* Contact Cards */}
         {[
-          { icon: "💬", label: "General", email: "hello@ziggybusiness.com", desc: "Sales questions, demos, partnerships" },
-          { icon: "🛠️", label: "Support", email: "support@ziggybusiness.com", desc: "Technical issues, account help, billing" },
+          { icon: "", label: "General", email: "hello@ziggybusiness.com", desc: "Sales questions, demos, partnerships" },
+          { icon: "️", label: "Support", email: "support@ziggybusiness.com", desc: "Technical issues, account help, billing" },
         ].map((c) => (
           <div key={c.label} style={{ background: "#111", border: "1px solid #1f1f1f", borderRadius: 16, padding: "28px 24px" }}>
             <div style={{ fontSize: 32, marginBottom: 12 }}>{c.icon}</div>
