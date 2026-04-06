@@ -48,8 +48,7 @@ export default function HomePage() {
             ZiggyPitch — Proposals for local business
           </div>
           <h1 className="text-5xl md:text-7xl font-bold text-white leading-tight tracking-tight mb-6">
-            Proposals that close deals.{' '}
-            {tagline.split('. ').length > 1 && <span className="text-[#f97316]"></span>}
+            Proposals that close deals
           </h1>
           <p className="text-xl md:text-2xl text-[#b3b3b3] max-w-3xl mx-auto leading-relaxed mb-10">
             We were sending proposals in Google Docs. Couldn't tell if clients opened them, couldn't collect signatures, couldn't track what worked. We built the fix — for less than $30/mo.
